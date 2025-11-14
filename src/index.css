@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-bg-main text-text-primary font-sans;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  * {
+    @apply box-border;
+  }
+}
+
+@layer components {
+  /* Botones principales */
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-full font-medium;
+    @apply hover:bg-primary-dark transition-all duration-200;
+    @apply shadow-soft hover:shadow-soft-md;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary text-primary bg-white px-6 py-3 rounded-full font-medium;
+    @apply hover:bg-accent-soft transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-bg-muted text-text-primary px-6 py-3 rounded-full font-medium;
+    @apply hover:bg-gray-300 transition-all duration-200;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-card-lg shadow-soft;
+    @apply hover:shadow-soft-md transition-shadow duration-200;
+  }
+
+  .card-bordered {
+    @apply bg-white rounded-card-lg border border-border-soft;
+    @apply hover:border-primary transition-colors duration-200;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full px-4 py-3 rounded-lg border border-border-soft;
+    @apply focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20;
+    @apply transition-all duration-200;
+  }
+
+  .input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500/20;
+  }
+
+  /* Container principal */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent;
+  }
+
+  .hover-lift {
+    @apply hover:-translate-y-1 transition-transform duration-200;
+  }
+}

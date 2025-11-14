@@ -1,0 +1,1 @@
+export { EducationalSection } from './EducationalSection';

@@ -1,0 +1,76 @@
+# --- Engine & Encoding ---
+RewriteEngine On
+
+# --- Force HTTPS (opcional, comenta si SiteGround ya fuerza) ---
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# --- Handle API passthrough (si usas /api local o proxy) ---
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^ - [L]
+
+# --- SPA: React Router -> index.html ---
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+# --- Security headers ---
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# --- MIME & CORS for fonts ---
+<IfModule mod_mime.c>
+  AddType font/woff2 .woff2
+  AddType font/woff .woff
+</IfModule>
+
+<FilesMatch "\.(woff2?|ttf|eot)$">
+  <IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+  </IfModule>
+</FilesMatch>
+
+# --- Compression: Brotli then Gzip ---
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/plain text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/json image/svg+xml
+</IfModule>
+
+# --- Serve precompressed if exists (optional) ---
+<IfModule mod_mime.c>
+  AddEncoding br .br
+  AddEncoding gz .gz
+</IfModule>
+
+# --- Caching static assets (immutable) ---
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|webp|woff|woff2|ttf|eot)$">
+  <IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 year"
+  </IfModule>
+  <IfModule mod_headers.c>
+    Header set Cache-Control "public, immutable"
+  </IfModule>
+</FilesMatch>
+
+# --- Cache HTML corto ---
+<FilesMatch "\.html$">
+  <IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 hour"
+  </IfModule>
+  <IfModule mod_headers.c>
+    Header set Cache-Control "public, must-revalidate"
+  </IfModule>
+</FilesMatch>
+
+# --- ETags (opcional) ---
+FileETag MTime Size
