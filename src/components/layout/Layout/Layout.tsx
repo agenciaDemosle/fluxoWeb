@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Navbar } from '../Navbar';
 import { Footer } from '../Footer';
 import { SmartCartDrawer } from '../../cart/CartDrawer';
+import { CalculatorModal } from '../../common';
 import { env } from '../../../config/env';
 
 export interface LayoutProps {
@@ -25,6 +26,7 @@ export const Layout: React.FC<LayoutProps> = ({
   jsonLd,
 }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   const fullTitle = title
     ? `${title} | ${env.site.name}`
@@ -64,18 +66,27 @@ export const Layout: React.FC<LayoutProps> = ({
       </Helmet>
 
       <div className="flex flex-col min-h-screen">
-        <Navbar onOpenCart={() => setIsCartOpen(true)} />
+        <Navbar
+          onOpenCart={() => setIsCartOpen(true)}
+          onOpenCalculator={() => setIsCalculatorOpen(true)}
+        />
 
         <main className="flex-1">
           {children}
         </main>
 
-        <Footer />
+        <Footer onOpenCalculator={() => setIsCalculatorOpen(true)} />
 
         {/* Cart Drawer */}
         <SmartCartDrawer
           isOpen={isCartOpen}
           onClose={() => setIsCartOpen(false)}
+        />
+
+        {/* Calculator Modal */}
+        <CalculatorModal
+          isOpen={isCalculatorOpen}
+          onClose={() => setIsCalculatorOpen(false)}
         />
       </div>
     </>

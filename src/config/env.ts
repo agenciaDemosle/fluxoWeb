@@ -36,4 +36,13 @@ export const env = {
     tiktok: import.meta.env.VITE_SOCIAL_TIKTOK || '',
     youtube: import.meta.env.VITE_SOCIAL_YOUTUBE || '',
   },
+
+  // API Endpoints
+  api: {
+    baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://fluxoclima.cl/api',
+    shippingZones: import.meta.env.VITE_SHIPPING_ZONES_URL || 'https://fluxoclima.cl/api/get-shipping-zones.php',
+    flowBridge: import.meta.env.VITE_FLOW_BRIDGE_URL || 'https://fluxoclima.cl/api/flow-bridge/process-flow-payment.php',
+    bankDetails: import.meta.env.VITE_BANK_DETAILS_URL || 'https://franciscal57.sg-host.com/demosle/wp-json/demosle-pay/v1/bank-details',
+    installationCosts: import.meta.env.VITE_INSTALLATION_COSTS_URL || 'https://franciscal57.sg-host.com/demosle/wp-json/fluxo/v1/installation-costs',
+  },
 } as const;

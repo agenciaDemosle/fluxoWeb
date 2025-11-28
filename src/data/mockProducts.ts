@@ -289,3 +289,40 @@ export const getProductBySlug = (slug: string): Product | null => {
 export const getProductById = (id: number): Product | null => {
   return mockProducts.find(p => p.id === id) || null;
 };
+
+// Función para obtener productos por BTU recomendado
+export const getProductsByBTU = (btu: number, limit = 3): Product[] => {
+  // Definir rangos de BTU según la recomendación
+  const ranges = [
+    { min: 0, max: 9000, targetBTU: 9000 },
+    { min: 9001, max: 12000, targetBTU: 12000 },
+    { min: 12001, max: 18000, targetBTU: 18000 },
+    { min: 18001, max: 24000, targetBTU: 24000 },
+    { min: 24001, max: 30000, targetBTU: 30000 },
+    { min: 30001, max: 36000, targetBTU: 36000 },
+    { min: 36001, max: Infinity, targetBTU: 48000 },
+  ];
+
+  const range = ranges.find((r) => btu >= r.min && btu <= r.max);
+  if (!range) return [];
+
+  // Buscar productos que coincidan con el BTU recomendado
+  const matchingProducts = mockProducts.filter((product) => {
+    if (!product.capacity) return false;
+    const productBTU = parseInt(product.capacity.match(/\d+/)?.[0] || '0');
+    return productBTU === range.targetBTU;
+  });
+
+  // Si no hay productos exactos, buscar cercanos
+  if (matchingProducts.length === 0) {
+    const nearbyProducts = mockProducts.filter((product) => {
+      if (!product.capacity) return false;
+      const productBTU = parseInt(product.capacity.match(/\d+/)?.[0] || '0');
+      // Buscar productos +/- 3000 BTU del rango recomendado
+      return Math.abs(productBTU - range.targetBTU) <= 3000;
+    });
+    return nearbyProducts.slice(0, limit);
+  }
+
+  return matchingProducts.slice(0, limit);
+};

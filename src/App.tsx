@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'react-hot-toast';
-import { HomePage, ProductsPage, ProductDetailPage, CheckoutPage, ThankYouPage, InstallationPage, ServicesPage, CalculatorPage } from './pages';
+import { HomePage, ProductsPage, ProductDetailPage, CheckoutPage, ThankYouPage, InstallationPage, ServicesPage } from './pages';
 import { ScrollToTop } from './components/common';
 
 // Create QueryClient instance
@@ -32,15 +32,18 @@ function App() {
             {/* Additional routes */}
             <Route path="/instalacion" element={<InstallationPage />} />
             <Route path="/servicios" element={<ServicesPage />} />
-            <Route path="/calculadora" element={<CalculatorPage />} />
+            <Route path="/cuenta" element={<HomePage />} />
+            <Route path="/favoritos" element={<ProductsPage />} />
+            <Route path="/comparar" element={<ProductsPage />} />
+            <Route path="/nosotros" element={<HomePage />} />
             <Route path="/faq" element={<HomePage />} />
           </Routes>
 
           {/* Toast notifications */}
           <Toaster
-            position="top-right"
+            position="bottom-right"
             toastOptions={{
-              duration: 4000,
+              duration: 3000,
               style: {
                 background: '#fff',
                 color: '#1E1F24',

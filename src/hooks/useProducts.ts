@@ -81,3 +81,30 @@ export const useOnSaleProducts = (limit = 8) => {
     per_page: limit,
   });
 };
+
+export const useProductsByBTU = (btu: number | null, limit = 3) => {
+  return useQuery({
+    queryKey: ['products', 'btu', btu, limit],
+    queryFn: async () => {
+      if (!btu) return [];
+
+      if (USE_MOCK_DATA) {
+        const { getProductsByBTU } = await import('../data/mockProducts');
+        return getProductsByBTU(btu, limit);
+      } else {
+        // Para WooCommerce real, buscaríamos por meta_data
+        const products = await wooApi.getProducts({ per_page: 100 });
+        return products
+          .map(mapWooProductToProduct)
+          .filter((product) => {
+            if (!product.capacity) return false;
+            const productBTU = parseInt(product.capacity.match(/\d+/)?.[0] || '0');
+            return productBTU === btu;
+          })
+          .slice(0, limit);
+      }
+    },
+    enabled: !!btu,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+};

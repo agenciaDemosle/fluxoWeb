@@ -31,6 +31,11 @@ export interface WooOrderCreate {
   billing: WooBillingShipping;
   shipping: WooBillingShipping;
   line_items: WooOrderLineItem[];
+  fee_lines?: Array<{
+    name: string;
+    total: string;
+    tax_status?: string;
+  }>;
   meta_data?: Array<{
     key: string;
     value: any;
@@ -78,7 +83,11 @@ export interface CheckoutFormData {
   region: string;
   postalCode?: string;
 
+  // Método de pago (dinámico desde WooCommerce)
+  paymentMethod: string;
+
   // Instalación
+  wantsInstallation?: boolean;
   installationPreferredDay?: string;
   installationPreferredTime?: string;
   installationNotes?: string;
@@ -90,5 +99,6 @@ export interface CheckoutResult {
   orderNumber?: string;
   hasInstallation: boolean;
   grandTotal: number;
+  paymentUrl?: string; // URL de Flow para redirigir al pago
   error?: string;
 }

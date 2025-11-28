@@ -6,13 +6,11 @@ import { Button, Badge, Spinner } from '../components/common';
 import { useProductBySlug } from '../hooks';
 import { useCartStore } from '../store/useCartStore';
 import { toast } from 'react-hot-toast';
-import type { CartItemType } from '../types';
 import { env } from '../config/env';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: product, isLoading } = useProductBySlug(slug || '');
-  const [selectedType, setSelectedType] = useState<CartItemType>('equipo_mas_instalacion');
   const [selectedImage, setSelectedImage] = useState(0);
   const addItem = useCartStore((state) => state.addItem);
 
@@ -44,11 +42,6 @@ export const ProductDetailPage: React.FC = () => {
   const installationPrice =
     product.installationPrice || product.price * env.installation.extraPercent;
 
-  const totalPrice =
-    selectedType === 'equipo_mas_instalacion'
-      ? product.price + installationPrice
-      : product.price;
-
   const handleAddToCart = () => {
     addItem({
       id: `${product.id}`,
@@ -59,12 +52,13 @@ export const ProductDetailPage: React.FC = () => {
       quantity: 1,
       basePrice: product.price,
       installationPrice,
-      type: selectedType,
+      type: 'solo_equipo', // Siempre agregar solo el equipo
       sku: product.sku,
     });
 
     toast.success('Producto agregado al carrito', {
       icon: '✅',
+      duration: 3000,
     });
   };
 
@@ -95,11 +89,11 @@ export const ProductDetailPage: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-12">
             {/* Imágenes */}
             <div>
-              <div className="aspect-square rounded-card-lg overflow-hidden bg-bg-muted mb-4">
+              <div className="aspect-square rounded-card-lg overflow-hidden bg-bg-muted mb-4 flex items-center justify-center">
                 <img
                   src={product.images[selectedImage] || product.imageUrl}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain p-4"
                 />
               </div>
 
@@ -114,7 +108,7 @@ export const ProductDetailPage: React.FC = () => {
                         selectedImage === idx ? 'border-primary' : 'border-border-soft'
                       }`}
                     >
-                      <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" />
+                      <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-contain p-1" />
                     </button>
                   ))}
                 </div>
@@ -156,60 +150,30 @@ export const ProductDetailPage: React.FC = () => {
               {/* Short description */}
               <p className="text-lg text-text-muted mb-6">{product.shortDescription}</p>
 
-              {/* Selector de tipo */}
+              {/* Precio */}
               <div className="mb-6">
-                <h3 className="font-semibold mb-3">Opciones de compra:</h3>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => setSelectedType('solo_equipo')}
-                    className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
-                      selectedType === 'solo_equipo'
-                        ? 'border-primary bg-accent-soft'
-                        : 'border-border-soft hover:border-primary/50'
-                    }`}
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium">Solo equipo</span>
-                      <span className="text-xl font-bold">${product.price.toLocaleString('es-CL')}</span>
+                <div className="bg-bg-muted rounded-lg p-6">
+                  <div className="flex justify-between items-baseline mb-2">
+                    <span className="text-sm text-text-muted">Precio del equipo</span>
+                    <span className="text-3xl font-bold text-primary">${product.price.toLocaleString('es-CL')}</span>
+                  </div>
+                  <p className="text-sm text-text-muted mb-4">
+                    + Instalación profesional disponible en el checkout
+                  </p>
+                  <div className="flex flex-col gap-2 text-sm text-success">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4" />
+                      <span>Instalación certificada disponible</span>
                     </div>
-                    <p className="text-sm text-text-muted">
-                      Equipo sin instalación. Debes contar con técnico certificado.
-                    </p>
-                  </button>
-
-                  <button
-                    onClick={() => setSelectedType('equipo_mas_instalacion')}
-                    className={`w-full p-4 rounded-lg border-2 text-left transition-all relative ${
-                      selectedType === 'equipo_mas_instalacion'
-                        ? 'border-primary bg-accent-soft'
-                        : 'border-border-soft hover:border-primary/50'
-                    }`}
-                  >
-                    <Badge variant="recommended" size="sm" className="absolute -top-2 right-4">
-                      RECOMENDADO
-                    </Badge>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium">Equipo + instalación profesional</span>
-                      <span className="text-xl font-bold">${totalPrice.toLocaleString('es-CL')}</span>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4" />
+                      <span>Mantienes garantía del fabricante</span>
                     </div>
-                    <p className="text-sm text-text-muted mb-3">
-                      Incluye instalación profesional, puesta en marcha y garantía extendida.
-                    </p>
-                    <div className="flex flex-col gap-1 text-sm text-success">
-                      <div className="flex items-center gap-2">
-                        <Check className="w-4 h-4" />
-                        <span>Instalación certificada</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="w-4 h-4" />
-                        <span>Mantienes garantía del fabricante</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="w-4 h-4" />
-                        <span>Agendamos día y horario contigo</span>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4" />
+                      <span>Agenda día y horario en el checkout</span>
                     </div>
-                  </button>
+                  </div>
                 </div>
               </div>
 

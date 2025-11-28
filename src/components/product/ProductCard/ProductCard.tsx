@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Star, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button, Badge } from '../../common';
 import { useCartStore } from '../../../store/useCartStore';
 import { toast } from 'react-hot-toast';
-import type { Product, CartItemType } from '../../../types';
+import type { Product } from '../../../types';
 import { env } from '../../../config/env';
 
 export interface ProductCardProps {
@@ -13,20 +13,12 @@ export interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const [selectedType, setSelectedType] = useState<CartItemType>(
-    'equipo_mas_instalacion'
-  );
   const quantity = 1;
   const addItem = useCartStore((state) => state.addItem);
 
   const installationPrice =
     product.installationPrice ||
     product.price * env.installation.extraPercent;
-
-  const totalPrice =
-    selectedType === 'equipo_mas_instalacion'
-      ? product.price + installationPrice
-      : product.price;
 
   const handleAddToCart = () => {
     addItem({
@@ -38,14 +30,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       quantity,
       basePrice: product.price,
       installationPrice,
-      type: selectedType,
+      type: 'solo_equipo', // Default a solo equipo
       sku: product.sku,
     });
 
     toast.success(
-      `${product.name} agregado al carrito${
-        selectedType === 'equipo_mas_instalacion' ? ' con instalación' : ''
-      }`,
+      `${product.name} agregado al carrito`,
       {
         duration: 3000,
         icon: '✅',
@@ -55,18 +45,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <motion.div
-      className="card overflow-hidden h-full flex flex-col"
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
+      className="bg-white rounded-card-lg overflow-hidden h-full flex flex-col group shadow-soft hover:shadow-soft-md transition-all duration-200"
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
     >
       {/* Imagen */}
       <Link to={`/producto/${product.slug}`} className="relative block flex-shrink-0">
-        <div className="aspect-square overflow-hidden bg-bg-muted">
+        <div className="aspect-square overflow-hidden bg-bg-muted flex items-center justify-center p-6">
           {product.imageUrl ? (
             <img
               src={product.imageUrl}
               alt={product.name}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-text-muted">
@@ -75,117 +65,78 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           )}
         </div>
 
-        {/* Badges */}
-        <div className="absolute top-3 left-3 right-3 z-10">
-          <div className="flex flex-wrap gap-1.5">
-            {product.onSale && (
-              <Badge variant="warning" size="sm">
-                OFERTA
-              </Badge>
-            )}
-            {product.inverter && (
-              <Badge variant="success" size="sm">
-                <Zap className="w-3 h-3 mr-1" />
-                INVERTER
-              </Badge>
-            )}
-            {product.energyRating && (
-              <Badge variant="primary" size="sm">
-                {product.energyRating}
-              </Badge>
-            )}
+        {/* Badges - Distribuidos izquierda y derecha */}
+        {product.onSale && (
+          <div className="absolute top-4 left-4 z-10">
+            <Badge variant="warning" size="sm" className="rounded-pill">
+              OFERTA
+            </Badge>
           </div>
-        </div>
+        )}
+        {product.inverter && (
+          <div className="absolute top-4 right-4 z-10">
+            <Badge variant="success" size="sm" className="rounded-pill">
+              <Zap className="w-3 h-3 mr-1" />
+              INVERTER
+            </Badge>
+          </div>
+        )}
       </Link>
 
       {/* Contenido */}
-      <div className="p-4 flex-1 flex flex-col">
-        {/* Título y detalles - altura fija */}
-        <div className="min-h-[100px]">
-          <Link to={`/producto/${product.slug}`}>
-            <h3 className="font-semibold text-text-primary hover:text-primary transition-colors line-clamp-2 min-h-[48px]">
-              {product.name}
-            </h3>
-          </Link>
+      <div className="p-5 flex-1 flex flex-col">
+        {/* Título y detalles */}
+        <Link to={`/producto/${product.slug}`}>
+          <h3 className="font-semibold text-lg text-text-primary hover:text-primary transition-colors line-clamp-2 mb-2">
+            {product.name}
+          </h3>
+        </Link>
 
-          {product.capacity && (
-            <p className="text-sm text-text-muted mt-1">{product.capacity}</p>
-          )}
+        {product.capacity && (
+          <p className="text-sm text-text-muted mb-3">{product.capacity}</p>
+        )}
 
-          {/* Rating */}
-          {product.ratingCount > 0 && (
-            <div className="flex items-center gap-1 mt-2">
-              <Star className="w-4 h-4 fill-warning text-warning" />
-              <span className="text-sm font-medium">{product.averageRating}</span>
-              <span className="text-xs text-text-muted">
-                ({product.ratingCount})
-              </span>
-            </div>
-          )}
-        </div>
+        {/* Rating */}
+        {product.ratingCount > 0 && (
+          <div className="flex items-center gap-1 mb-4">
+            <Star className="w-4 h-4 fill-warning text-warning" />
+            <span className="text-sm font-medium text-text-primary">{product.averageRating}</span>
+            <span className="text-xs text-text-light">
+              ({product.ratingCount})
+            </span>
+          </div>
+        )}
 
-        {/* Selector de tipo - se empuja al fondo */}
-        <div className="mt-auto space-y-2">
-          <button
-            onClick={() => setSelectedType('solo_equipo')}
-            className={`w-full p-3 rounded-lg border-2 text-left transition-all ${
-              selectedType === 'solo_equipo'
-                ? 'border-primary bg-accent-soft'
-                : 'border-border-soft hover:border-primary/50'
-            }`}
-          >
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Solo equipo</span>
-              <span className="text-sm font-bold">
-                ${product.price.toLocaleString('es-CL')}
-              </span>
-            </div>
-          </button>
-
-          <button
-            onClick={() => setSelectedType('equipo_mas_instalacion')}
-            className={`w-full p-3 rounded-lg border-2 text-left transition-all relative ${
-              selectedType === 'equipo_mas_instalacion'
-                ? 'border-primary bg-accent-soft'
-                : 'border-border-soft hover:border-primary/50'
-            }`}
-          >
-            <Badge
-              variant="recommended"
-              size="sm"
-              className="absolute -top-2 right-2"
-            >
-              RECOMENDADO
-            </Badge>
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Equipo + instalación</span>
-              <span className="text-sm font-bold">
-                ${totalPrice.toLocaleString('es-CL')}
-              </span>
-            </div>
-            <p className="text-xs text-text-muted mt-1">
-              Incluye instalación profesional y garantía extendida
+        {/* Precio - se empuja al fondo */}
+        <div className="mt-auto">
+          <div className="mb-4">
+            <p className="text-sm text-text-muted mb-1">Precio del equipo</p>
+            <p className="text-2xl font-bold text-text-primary">
+              ${product.price.toLocaleString('es-CL')}
             </p>
-          </button>
-        </div>
+            <p className="text-xs text-text-light mt-1">
+              + Instalación profesional a cotizar
+            </p>
+          </div>
 
-        {/* Botón agregar al carrito */}
-        <Button
-          variant="primary"
-          fullWidth
-          className="mt-3"
-          onClick={handleAddToCart}
-          disabled={!product.inStock}
-        >
-          {product.inStock ? (
-            <>
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              Agregar al carrito
-            </>
-          ) : (
-            'Agotado'
-          )}
-        </Button>
+          {/* Botón agregar al carrito */}
+          <Button
+            variant="primary"
+            fullWidth
+            className="rounded-pill"
+            onClick={handleAddToCart}
+            disabled={!product.inStock}
+          >
+            {product.inStock ? (
+              <>
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                Agregar al carrito
+              </>
+            ) : (
+              'Agotado'
+            )}
+          </Button>
+        </div>
       </div>
     </motion.div>
   );

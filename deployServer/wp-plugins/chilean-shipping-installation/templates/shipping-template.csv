@@ -1,0 +1,17 @@
+region,nombre_zona,costo_envio
+RM,Región Metropolitana,0
+V,Valparaíso,5000
+VIII,Biobío,5000
+VI,O'Higgins,8000
+VII,Maule,8000
+IX,Araucanía,8000
+XIV,Los Ríos,8000
+X,Los Lagos,8000
+III,Atacama,10000
+IV,Coquimbo,10000
+I,Tarapacá,15000
+II,Antofagasta,15000
+XI,Aysén,15000
+XII,Magallanes,15000
+XV,Arica y Parinacota,15000
+XVI,Ñuble,8000

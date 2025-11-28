@@ -1,0 +1,39 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+table { border-collapse: collapse; }
+th, td { border: 1px solid #000; padding: 8px; }
+th { background-color: #4CAF50; color: white; font-weight: bold; }
+</style>
+</head>
+<body>
+<table>
+<thead>
+<tr>
+<th>region</th>
+<th>nombre_zona</th>
+<th>costo_envio</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>RM</td><td>Región Metropolitana</td><td>0</td></tr>
+<tr><td>V</td><td>Valparaíso</td><td>5000</td></tr>
+<tr><td>VIII</td><td>Biobío</td><td>5000</td></tr>
+<tr><td>VI</td><td>O'Higgins</td><td>8000</td></tr>
+<tr><td>VII</td><td>Maule</td><td>8000</td></tr>
+<tr><td>IX</td><td>Araucanía</td><td>8000</td></tr>
+<tr><td>XIV</td><td>Los Ríos</td><td>8000</td></tr>
+<tr><td>X</td><td>Los Lagos</td><td>8000</td></tr>
+<tr><td>III</td><td>Atacama</td><td>10000</td></tr>
+<tr><td>IV</td><td>Coquimbo</td><td>10000</td></tr>
+<tr><td>I</td><td>Tarapacá</td><td>15000</td></tr>
+<tr><td>II</td><td>Antofagasta</td><td>15000</td></tr>
+<tr><td>XI</td><td>Aysén</td><td>15000</td></tr>
+<tr><td>XII</td><td>Magallanes</td><td>15000</td></tr>
+<tr><td>XV</td><td>Arica y Parinacota</td><td>15000</td></tr>
+<tr><td>XVI</td><td>Ñuble</td><td>8000</td></tr>
+</tbody>
+</table>
+</body>
+</html>
